@@ -23,6 +23,8 @@ public class Main extends JavaPlugin {
         }
         config = getConfig();
 
+        checkConfig();
+
         logger.info("Starting discord sync...");
         if (config.getString("webhook_url") == null || config.getString("webhook_url") == "null") {
             getLogger().severe("DSync configuration webhook token not set. Set a token and restart server to apply changes.");
@@ -36,11 +38,42 @@ public class Main extends JavaPlugin {
         logger.info("Registering event listeners...");
         getServer().getPluginManager().registerEvents(new EventListener(this, stdout), this);
 
-        stdout.SendEmbed(":green_circle:  Server Online", "The server is now online.", 3066993);
+        stdout.SendEmbed(config.getString("messages.server.started.title"), config.getString("messages.server.started.description"), config.getInt("messages.server.started.color"));
     }
 
     @Override
     public void onDisable() {
-        stdout.SendEmbedSync(":red_circle:  Server Offline", "The server is now offline.", 10038562);
+        if (config.getString("webhook_url") != null && config.getString("webhook_url") != "null") {
+            stdout.SendEmbedSync(config.getString("messages.server.stopped.title"), config.getString("messages.server.stopped.description"), config.getInt("messages.server.stopped.color"));
+        }
+    }
+
+    private void checkConfig() {
+        if(config.getString("messages.player.join") == null) {
+            config.set("messages.player.join", ":arrow_right:  $PLAYER has connected");
+        }
+        if(config.getString("messages.player_quit") == null) {
+            config.set("messages.player.quit", ":arrow_left:  $PLAYER has disconnected");
+        }
+        if(config.getString("messages.player.advancement") == null) {
+            config.set("messages.player.advancement", ":orange_book:  $PLAYER has completed an advancement! **[ $ADVANCEMENT ]**");
+        }
+        if(config.getString("messages.player.death") == null) {
+            config.set("messages.player.death", ":skull:  $MESSAGE");
+        }
+        if(config.getString("messages.server.started.title") == null ||
+                config.getString("messages.server.started.description") == null ||
+                config.getString("messages.server.started.color") == null) {
+            config.set("messages.server.started.title", ":green_circle:  Server Online");
+            config.set("messages.server.started.description", "The server is now online.");
+            config.set("messages.server.started.color", 3066993);
+        }
+        if(config.getString("messages.server.stopped.title") == null ||
+                config.getString("messages.server.stopped.description") == null ||
+                config.getString("messages.server.stopped.color") == null) {
+            config.set("messages.server.stopped.title", ":red_circle:  Server Offline");
+            config.set("messages.server.stopped.description", "The server is now offline.");
+            config.set("messages.server.stopped.color", 10038562);
+        }
     }
 }

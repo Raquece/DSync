@@ -1,9 +1,7 @@
 package dev.raquece.dsync;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.bukkit.advancement.AdvancementDisplay;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -14,7 +12,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 public class EventListener implements Listener {
     public EventListener(JavaPlugin main, WebhookOut stdout) {
@@ -34,28 +31,35 @@ public class EventListener implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent e) {
-        String msg = e.getDeathMessage();
-        stdout.SendMessage(":skull:  " + msg);
+        var msg = main.getConfig().getString("messages.player.death");
+        msg = msg.replaceAll("[$]VICTIM", e.getEntity().getName());
+        msg = msg.replaceAll("[$]MESSAGE", e.getDeathMessage());
+        stdout.SendMessage(msg);
     }
 
     @EventHandler
     public void onAdvancementDone(PlayerAdvancementDoneEvent e) {
         var rkey = e.getAdvancement().getKey().getKey().replace('/', '.');
         String key = "advancements." + rkey + ".title";
-        var msg = adv_locales.get(key).getAsString();
-        String player = e.getPlayer().getName();
-        stdout.SendMessage(":orange_book:  " + player + " has completed an advancement! **[ " + msg + " ]**");
+        var title = adv_locales.get(key).getAsString();
+
+        var msg = main.getConfig().getString("messages.player.advancement");
+        msg = msg.replaceAll("[$]PLAYER", e.getPlayer().getName());
+        msg = msg.replaceAll("[$]ADVANCEMENT", title);
+        stdout.SendMessage(msg);
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        String player = e.getPlayer().getName();
-        stdout.SendMessage(":arrow_right:  " + player + " has connected");
+        var msg = main.getConfig().getString("messages.player.join");
+        msg = msg.replaceAll("[$]PLAYER", e.getPlayer().getName());
+        stdout.SendMessage(msg);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
-        String player = e.getPlayer().getName();
-        stdout.SendMessage(":arrow_left:  " + player + " has disconnected");
+        var msg = main.getConfig().getString("messages.player.quit");
+        msg = msg.replaceAll("[$]PLAYER", e.getPlayer().getName());
+        stdout.SendMessage(msg);
     }
 }
