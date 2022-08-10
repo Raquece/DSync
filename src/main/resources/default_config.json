@@ -1,0 +1,12 @@
+{
+  "messages.player.join": ":arrow_right:  $PLAYER has connected",
+  "messages.player_quit": ":arrow_left:  $PLAYER has disconnected",
+  "messages.player.death": ":skull:  $MESSAGE",
+  "messages.player.advancement": ":orange_book:  $PLAYER has completed an advancement! **[ $ADVANCEMENT ]**",
+  "messages.server.started.title": ":green_circle:  Server Online",
+  "messages.server.started.description": "The server is now online.",
+  "messages.server.started.color": "3066993",
+  "messages.server.stopped.title": ":red_circle:  Server Offline",
+  "messages.server.stopped.description": "The server is now offline.",
+  "messages.server.stopped.color": "10038562"
+}

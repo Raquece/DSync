@@ -6,7 +6,7 @@
 
     <groupId>dev.raquece</groupId>
     <artifactId>DSync</artifactId>
-    <version>1.19.0</version>
+    <version>1.19.1-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

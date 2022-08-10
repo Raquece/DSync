@@ -4,6 +4,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main extends JavaPlugin {
     private WebhookOut stdout;
@@ -38,13 +40,28 @@ public class Main extends JavaPlugin {
         logger.info("Registering event listeners...");
         getServer().getPluginManager().registerEvents(new EventListener(this, stdout), this);
 
-        stdout.SendEmbed(config.getString("messages.server.started.title"), config.getString("messages.server.started.description"), config.getInt("messages.server.started.color"));
+        Pattern versionP = Pattern.compile("MC: [^)]*");
+        Matcher m = versionP.matcher(getServer().getVersion());
+        String ver = "";
+        if (m.find()) {
+            ver = m.group(0);
+        }
+
+        var title = config.getString("messages.server.started.title");
+        var message = config.getString("messages.server.started.description");
+        title = title.replaceAll("[$]VERSION", ver);
+        message = message.replaceAll("[$]VERSION", ver);
+        stdout.SendEmbed(title, message, config.getInt("messages.server.started.color"));
     }
 
     @Override
     public void onDisable() {
         if (config.getString("webhook_url") != null && config.getString("webhook_url") != "null") {
-            stdout.SendEmbedSync(config.getString("messages.server.stopped.title"), config.getString("messages.server.stopped.description"), config.getInt("messages.server.stopped.color"));
+            var title = config.getString("messages.server.stopped.title");
+            var message = config.getString("messages.server.stopped.description");
+            title = title.replaceAll("[$]VERSION", getServer().getVersion());
+            message = message.replaceAll("[$]VERSION", getServer().getVersion());
+            stdout.SendEmbedSync(title, message, config.getInt("messages.server.stopped.color"));
         }
     }
 
